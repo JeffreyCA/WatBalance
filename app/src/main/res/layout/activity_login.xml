@@ -46,7 +46,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:text="@string/button_login" />
+        android:text="@string/button_login"
+        android:onClick="onButtonClick"/>
 
     <TextView
         android:id="@+id/forgotPIN"

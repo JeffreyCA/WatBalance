@@ -9,13 +9,15 @@ import android.widget.TextView;
 
 import com.cg.watbalance.R;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import ca.jeffrey.watcard.WatTransaction;
 
 public class TransactionListAdapter extends BaseAdapter {
     private static LayoutInflater inflater = null;
-    private ArrayList<TransactionData.Transaction> transList;
+    private List<WatTransaction> transList;
 
-    public TransactionListAdapter(Context context, ArrayList<TransactionData.Transaction> newTransList) {
+    public TransactionListAdapter(Context context, List<WatTransaction> newTransList) {
         transList = newTransList;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -46,8 +48,8 @@ public class TransactionListAdapter extends BaseAdapter {
         holder.Time = (TextView) rowView.findViewById(R.id.tranTime);
         holder.Amount = (TextView) rowView.findViewById(R.id.tranAmt);
 
-        holder.Title.setText(transList.get(position).getTitle());
-        holder.Type.setText(transList.get(position).getTypeString());
+        holder.Title.setText(transList.get(position).getTerminal());
+        holder.Type.setText(transList.get(position).getType());
         holder.Time.setText(transList.get(position).getTimeString());
         holder.Amount.setText(transList.get(position).getAmountString());
         return rowView;

@@ -13,12 +13,7 @@ import com.cg.watbalance.data.BalanceData;
 import com.cg.watbalance.data.OutletData;
 import com.cg.watbalance.data.transaction.TransactionData;
 
-import org.jsoup.Jsoup;
-
-import ca.jeffrey.watcard.WatAccount;
-
 public abstract class Connection {
-    WatAccount myAccount;
     ConnectionDetails myConnDetails;
     RequestQueue queue;
     Context myContext;
@@ -42,35 +37,25 @@ public abstract class Connection {
 
         // Add the request to the RequestQueue.
         createBalanceRequest();
+        createTransHistoryRequest();
+
         // queue.add(createTransHistoryRequest());
-        // queue.add(createMenuRequest());
-        // queue.add(createOutletRequest());
-        // queue.add(createBuildingRequest());
+        queue.add(createMenuRequest());
+        queue.add(createOutletRequest());
+        queue.add(createBuildingRequest());
     }
 
     private void createBalanceRequest() {
         myBalData = new BalanceData();
-        myBalData.setBalanceData(myAccount);
+        myBalData.setBalanceData(myConnDetails.getAccount());
         onDataReceive();
     }
 
 
-    private StringRequest createTransHistoryRequest() {
-        return new StringRequest(Request.Method.GET, myConnDetails.getTransactionURL(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        if (!response.contains("The Account or PIN code is incorrect!")) {
-                            myTransData = new TransactionData();
-                            myTransData.setTransList(Jsoup.parse(response));
-                            onDataReceive();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        });
+    private void createTransHistoryRequest() {
+        myTransData = new TransactionData();
+        myTransData.setTransList(myConnDetails.getAccount());
+        onDataReceive();
     }
 
     private StringRequest createMenuRequest() {
@@ -120,7 +105,9 @@ public abstract class Connection {
     }
 
     private void onDataReceive() {
-        if (myBalData != null && myTransData != null && myOutletData != null && outletResponse != null && buildingResponse != null) {
+        if (myBalData != null
+                && myTransData != null && myOutletData != null && outletResponse != null && buildingResponse != null
+                ) {
             Log.d("DATA", "RECEIVED");
             myBalData.setDailyBalance(myTransData, myContext);
             myOutletData.setOutletStatus(outletResponse);
@@ -145,7 +132,7 @@ public abstract class Connection {
 
     public abstract void onComplete();
 
-    public abstract void onResponseReceive(WatAccount myAccount);
+    public abstract void onResponseReceive();
 
     public abstract void beforeConnect();
 

@@ -2,6 +2,8 @@ package com.cg.watbalance.preferences;
 
 import org.joda.time.DateTime;
 
+import ca.jeffrey.watcard.WatAccount;
+
 public class ConnectionDetails {
     final String uWaterlooURL = "https://watcard.uwaterloo.ca/OneWeb/Scripts/OneWeb.exe?";
     final String APIURL = "https://api.uwaterloo.ca/v2/";
@@ -13,14 +15,37 @@ public class ConnectionDetails {
     private String myPinNum = null;
     private String myBalanceURL;
 
-    public ConnectionDetails(String newIDNum, String newPinNum) {
+    private WatAccount myAccount;
+
+    public ConnectionDetails(final String newIDNum, final String newPinNum) {
         myIDNum = newIDNum;
         myPinNum = newPinNum;
-        myBalanceURL = uWaterlooURL + "acnt_1=" + myIDNum + "&acnt_2=" + myPinNum + "&FINDATAREP=ON&STATUS=STATUS";
+
+        Thread t = new Thread(new Runnable (){
+            @Override
+            public void run() {
+                myAccount = new WatAccount(newIDNum, newPinNum);
+                myAccount.login();
+                myAccount.loadBalances();
+                myAccount.loadPersonalInfo();
+            }
+        });
+
+        t.start();
+
+        try {
+            t.join();
+        }
+        catch (Exception E) {}
     }
+
 
     public String getBalanceURL() {
         return myBalanceURL;
+    }
+
+    public WatAccount getAccount() {
+        return myAccount;
     }
 
     public String getTransactionURL() {

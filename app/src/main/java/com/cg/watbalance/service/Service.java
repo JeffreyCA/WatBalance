@@ -20,8 +20,6 @@ import com.cg.watbalance.preferences.ConnectionDetails;
 import com.cg.watbalance.preferences.Encryption;
 import com.cg.watbalance.preferences.FileManager;
 
-import org.jsoup.nodes.Document;
-
 public class Service extends BroadcastReceiver {
     Connection myConn;
     ConnectionDetails myConnDet;
@@ -80,7 +78,7 @@ public class Service extends BroadcastReceiver {
             }
 
             @Override
-            public void onResponseReceive(Document myDoc) {
+            public void onResponseReceive() {
 
             }
         };

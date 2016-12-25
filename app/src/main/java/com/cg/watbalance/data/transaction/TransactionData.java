@@ -7,9 +7,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import ca.jeffrey.watcard.WatAccount;
+import ca.jeffrey.watcard.WatTransaction;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Line;
@@ -24,29 +26,29 @@ import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
 
 public class TransactionData implements Serializable {
-    private ArrayList<Transaction> myTransList;
+    private List<WatTransaction> myTransList;
 
-    public ArrayList<Transaction> getTransList() {
+    public List<WatTransaction> getTransList() {
         return myTransList;
     }
 
-    public void setTransList(Document myDoc) {
-        Elements Tags = myDoc
-                .normalise()
-                .body()
-                .getElementById("oneweb_financial_history_table")
-                .getElementsByTag("tr");
-        Tags.remove(0);
-        Tags.remove(0);
+    public void setTransList(final WatAccount myAccount) {
+        Thread t = new Thread(new Runnable (){
+            @Override
+            public void run() {
+                myTransList = myAccount.getLastDaysTransactions(60, false);
+            }
+        });
 
-        myTransList = new ArrayList<>();
-        int TransCount = Tags.size();
+        t.start();
 
-        for (int i = 0; i < TransCount; i++) {
-            Transaction newTrans = new Transaction(Tags.first());
-            Tags.remove(0);
-            myTransList.add(newTrans);
+        try {
+            t.join();
         }
+        catch (Exception E) {
+
+        }
+
     }
 
     public void setBuildingTitle(String response) {
@@ -54,9 +56,9 @@ public class TransactionData implements Serializable {
             JSONArray buildingArray = new JSONObject(response).getJSONArray("data");
             for (int i = 0; i < myTransList.size(); i++) {
                 for (int j = 0; j < buildingArray.length(); j++) {
-                    String buildingCode = myTransList.get(i).getTitle().split("-")[0];
+                    String buildingCode = myTransList.get(i).getTerminal().split("-")[0];
                     if (buildingCode.equals(buildingArray.getJSONObject(j).getString("building_code"))) {
-                        myTransList.get(i).setTitle(buildingArray.getJSONObject(j).getString("building_name"));
+                        myTransList.get(i).setTerminal(buildingArray.getJSONObject(j).getString("building_name"));
                     }
                 }
             }
@@ -70,16 +72,16 @@ public class TransactionData implements Serializable {
 
         if(myTransList.size() == 0) return myPointList;
 
-        Transaction firstTrans = myTransList.get(0);
-        DateTime lastDate = firstTrans.getDate();
-        PointValue myPoint = new PointValue(lastDate.getDayOfMonth(), -firstTrans.getAmount());
+        WatTransaction firstTrans = myTransList.get(0);
+        LocalDateTime lastDate = firstTrans.getDateTime();
+        PointValue myPoint = new PointValue((float) lastDate.getDayOfMonth(), -firstTrans.getAmount());
 
         for (int i = 1; i < myTransList.size(); i++) {
-            Transaction currentTrans = myTransList.get(i);
-            if (!lastDate.withTimeAtStartOfDay().isEqual(currentTrans.getDate().withTimeAtStartOfDay())) {
+            WatTransaction currentTrans = myTransList.get(i);
+            if (!lastDate.truncatedTo(ChronoUnit.DAYS).isEqual(currentTrans.getDateTime().truncatedTo(ChronoUnit.DAYS))) {
                 myPoint.setLabel(NumberFormat.getCurrencyInstance(Locale.CANADA).format(myPoint.getY()));
                 myPointList.add(myPoint);
-                lastDate = currentTrans.getDate();
+                lastDate = currentTrans.getDateTime();
                 myPoint = new PointValue(lastDate.getDayOfMonth(), -currentTrans.getAmount());
             } else {
                 myPoint.set(myPoint.getX(), myPoint.getY() + -currentTrans.getAmount());

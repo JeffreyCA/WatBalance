@@ -4,20 +4,23 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
+import android.util.Log;
 
 import com.cg.watbalance.data.transaction.TransactionData;
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import ca.jeffrey.watcard.WatAccount;
+import ca.jeffrey.watcard.WatTransaction;
 
 public class BalanceData implements Serializable {
     private float MP = 0;
@@ -26,10 +29,10 @@ public class BalanceData implements Serializable {
     private float Total = 0;
     private float dailyBalance = 0;
     private float todaySpent = 0;
-    private DateTime Date;
+    private LocalDateTime Date;
     private boolean DatePassed = false;
 
-    public void setBalanceData(WatAccount myAccount) {
+    public void setBalanceData(final WatAccount myAccount) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.CANADA);
 
         try {
@@ -37,7 +40,7 @@ public class BalanceData implements Serializable {
             FD = numberFormat.parse(String.valueOf(myAccount.getFlexBalance())).floatValue();
             Other = numberFormat.parse(String.valueOf(myAccount.getOtherBalance())).floatValue();
             Total = numberFormat.parse(String.valueOf(myAccount.getTotalBalance())).floatValue();
-            Date = DateTime.now();
+            Date = LocalDateTime.now();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,25 +48,26 @@ public class BalanceData implements Serializable {
 
     public void setDailyBalance(TransactionData myTransData, Context context) {
         todaySpent = 0;
-        ArrayList<TransactionData.Transaction> myTransList = myTransData.getTransList();
+
+        List<WatTransaction> myTransList = myTransData.getTransList();
 
         SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int DailyBalConfig = Integer.parseInt(myPreferences.getString("dailyBalanceChoice", "1"));
 
-        DateTimeFormatter myFormat = DateTimeFormat.forPattern("yyyy.MM.dd");
-
-        DateTime endOfTerm = myFormat.parseDateTime(myPreferences.getString("termEnd", DateTime.now().toString(myFormat)));
-        DateTime today = DateTime.now().withTimeAtStartOfDay();
+        DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+        Log.i("END_OF_TERM", myPreferences.getString("termEnd", LocalDateTime.now().format(myFormat)));
+        LocalDate endOfTerm = LocalDate.parse(myPreferences.getString("termEnd", LocalDateTime.now().format(myFormat)), myFormat);
+        LocalDate today = LocalDateTime.now().toLocalDate();
 
         if (endOfTerm.isBefore(today)) {
             DatePassed = true;
         } else {
-            int daysToTermEnd = Days.daysBetween(today, endOfTerm).getDays();
+            long daysToTermEnd = ChronoUnit.DAYS.between(today, endOfTerm);
             switch (DailyBalConfig) {
                 case 2: {
                     for (int i = 0; i < myTransList.size(); i++) {
-                        boolean isToday = myTransList.get(i).getDate().withTimeAtStartOfDay().equals(today);
-                        boolean isMealPlan = (myTransList.get(i).getType() == 0);
+                        boolean isToday = myTransList.get(i).getDateTime().truncatedTo(ChronoUnit.DAYS).equals(today);
+                        boolean isMealPlan = (myTransList.get(i).getType().equals("0"));
                         if (isToday && isMealPlan) {
                             todaySpent += myTransList.get(i).getAmount();
                         }
@@ -73,8 +77,8 @@ public class BalanceData implements Serializable {
                 }
                 case 3: {
                     for (int i = 0; i < myTransList.size(); i++) {
-                        boolean isToday = myTransList.get(i).getDate().withTimeAtStartOfDay().equals(today);
-                        boolean isFlexDollar = (myTransList.get(i).getType() == 1);
+                        boolean isToday = myTransList.get(i).getDateTime().truncatedTo(ChronoUnit.DAYS).equals(today);
+                        boolean isFlexDollar = (myTransList.get(i).getType().equals("1"));
                         if (isToday && isFlexDollar) {
                             todaySpent += myTransList.get(i).getAmount();
                         }
@@ -84,7 +88,7 @@ public class BalanceData implements Serializable {
                 }
                 default: {
                     for (int i = 0; i < myTransList.size(); i++) {
-                        boolean isToday = myTransList.get(i).getDate().withTimeAtStartOfDay().equals(today);
+                        boolean isToday = myTransList.get(i).getDateTime().truncatedTo(ChronoUnit.DAYS).equals(today);
                         if (isToday) {
                             todaySpent += myTransList.get(i).getAmount();
                         }
@@ -127,8 +131,11 @@ public class BalanceData implements Serializable {
     public Boolean getDatePassed() {
         return DatePassed;
     }
+
     public String getDateString() {
-        String txt = DateUtils.getRelativeTimeSpanString(Date.getMillis()).toString();
+        String txt = DateUtils.getRelativeTimeSpanString(Date.atZone(ZoneId. // Cannot use this
+                systemDefault()).toInstant().toEpochMilli()).toString();
+        Log.i("DATE_STRING", txt);
         if (txt.equals("0 minutes ago")) {
             return "Now";
         } else {

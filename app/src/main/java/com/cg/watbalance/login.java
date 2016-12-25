@@ -20,6 +20,7 @@ import com.cg.watbalance.preferences.Connection;
 import com.cg.watbalance.preferences.ConnectionDetails;
 import com.cg.watbalance.preferences.Encryption;
 import com.cg.watbalance.service.Service;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
@@ -44,6 +45,7 @@ public class login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        AndroidThreeTen.init(this);
 
         myEncryption = new Encryption(getApplicationContext());
 
@@ -70,10 +72,13 @@ public class login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 myConnDet = new ConnectionDetails(IDNum.getText().toString(), pinNum.getText().toString());
+
+                final WatAccount myAccount = myConnDet.getAccount();
+
                 myConn = new Connection(myConnDet, getApplicationContext()) {
 
                     @Override
-                    public void onResponseReceive(WatAccount myAccount) {
+                    public void onResponseReceive() {
                         myAccount.loadPersonalInfo();
                         String FullName = myAccount.getName();
                         String TempFirstName = FullName.split(",")[1];
@@ -134,6 +139,62 @@ public class login extends AppCompatActivity {
         });
     }
 
+    public void onButtonClick(View v) {
+        myConnDet = new ConnectionDetails(IDNum.getText().toString(), pinNum.getText().toString());
+
+        final WatAccount myAccount = myConnDet.getAccount();
+
+        myConn = new Connection(myConnDet, getApplicationContext()) {
+            @Override
+            public void onResponseReceive() {
+                myAccount.loadPersonalInfo();
+                String FullName = myAccount.getName();
+                String TempFirstName = FullName.split(",")[1];
+                String TempLastName = FullName.split(",")[0];
+                String FirstName = WordUtils.capitalizeFully(TempFirstName.substring(0, TempFirstName.length() - 1));
+                String LastName = WordUtils.capitalizeFully(TempLastName);
+                myPrefEditor = myPreferences.edit();
+                myPrefEditor.putString("Name", FirstName + " " + LastName);
+                myPrefEditor.apply();
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d("LOGIN", "SUCCESS");
+                String encryptedPIN = myEncryption.encryptPIN(pinNum.getText().toString());
+
+                myPrefEditor = myPreferences.edit();
+                myPrefEditor.putString("IDNum", IDNum.getText().toString());
+                myPrefEditor.putString("PinNum", encryptedPIN);
+                myPrefEditor.putInt("versionCode", BuildConfig.VERSION_CODE);
+                myPrefEditor.putBoolean("login", true);
+                myPrefEditor.apply();
+
+                startRepeat();
+                setTermEnd();
+
+                Intent myIntent = new Intent(login.this, balanceScreen.class);
+                startActivity(myIntent);
+                finish();
+            }
+
+            @Override
+            public void beforeConnect() {
+            }
+
+            @Override
+            public void onConnectionError() {
+                Toast.makeText(getApplicationContext(), "Connection Error", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onIncorrectLogin() {
+                Toast.makeText(getApplicationContext(), "Incorrect Login Information", Toast.LENGTH_LONG).show();
+            }
+        };
+        myConn.getData();
+
+    }
     public void startRepeat() {
         AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         PendingIntent newPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(this, Service.class), 0);
