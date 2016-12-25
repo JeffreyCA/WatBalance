@@ -126,7 +126,7 @@ public class login extends AppCompatActivity {
         forgotPIN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String resetURL = "https://account.watcard.uwaterloo.ca/pinreset.asp";
+                String resetURL = "https://watcard.uwaterloo.ca/OneWeb/Account/ResetPin";
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(resetURL));
                 startActivity(i);
