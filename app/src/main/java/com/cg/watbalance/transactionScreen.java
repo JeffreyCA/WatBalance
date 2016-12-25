@@ -30,7 +30,6 @@ import com.cg.watbalance.service.Service;
 
 import org.joda.time.DateTime;
 
-import lecho.lib.hellocharts.model.SelectedValue;
 import lecho.lib.hellocharts.view.LineChartView;
 
 public class transactionScreen extends AppCompatActivity
@@ -105,7 +104,7 @@ public class transactionScreen extends AppCompatActivity
         final int id = item.getItemId();
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
             }
@@ -117,7 +116,7 @@ public class transactionScreen extends AppCompatActivity
             @Override
             public void onDrawerClosed(View drawerView) {
                 switchScreen(id);
-                drawer.setDrawerListener(null);
+                drawer.addDrawerListener(null);
             }
 
             @Override

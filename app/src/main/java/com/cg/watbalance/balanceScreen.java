@@ -103,31 +103,29 @@ public class balanceScreen extends AppCompatActivity
         final int id = item.getItemId();
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 switchScreen(id);
-                drawer.setDrawerListener(null);
+                drawer.addDrawerListener(null);
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
-
             }
         });
         drawer.closeDrawers();
         return true;
     }
+
 
     public void switchScreen(int id) {
         if (id == R.id.nav_transactions) {
