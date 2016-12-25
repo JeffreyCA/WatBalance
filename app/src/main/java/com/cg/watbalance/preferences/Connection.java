@@ -14,9 +14,11 @@ import com.cg.watbalance.data.OutletData;
 import com.cg.watbalance.data.transaction.TransactionData;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+
+import ca.jeffrey.watcard.WatAccount;
 
 public abstract class Connection {
+    WatAccount myAccount;
     ConnectionDetails myConnDetails;
     RequestQueue queue;
     Context myContext;
@@ -39,35 +41,17 @@ public abstract class Connection {
         beforeConnect();
 
         // Add the request to the RequestQueue.
-        queue.add(createBalanceRequest());
-        queue.add(createTransHistoryRequest());
-        queue.add(createMenuRequest());
-        queue.add(createOutletRequest());
-        queue.add(createBuildingRequest());
+        createBalanceRequest();
+        // queue.add(createTransHistoryRequest());
+        // queue.add(createMenuRequest());
+        // queue.add(createOutletRequest());
+        // queue.add(createBuildingRequest());
     }
 
-    private StringRequest createBalanceRequest() {
-        return new StringRequest(Request.Method.GET, myConnDetails.getBalanceURL(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        if (!response.contains("The Account or PIN code is incorrect!")) {
-                            Document myDoc = Jsoup.parse(response);
-                            onResponseReceive(myDoc);
-
-                            myBalData = new BalanceData();
-                            myBalData.setBalanceData(myDoc);
-                            onDataReceive();
-                        } else {
-                            onIncorrectLogin();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                onConnectionError();
-            }
-        });
+    private void createBalanceRequest() {
+        myBalData = new BalanceData();
+        myBalData.setBalanceData(myAccount);
+        onDataReceive();
     }
 
 
@@ -161,7 +145,7 @@ public abstract class Connection {
 
     public abstract void onComplete();
 
-    public abstract void onResponseReceive(Document myDoc);
+    public abstract void onResponseReceive(WatAccount myAccount);
 
     public abstract void beforeConnect();
 

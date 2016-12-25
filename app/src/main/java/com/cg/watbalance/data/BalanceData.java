@@ -11,13 +11,13 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import ca.jeffrey.watcard.WatAccount;
 
 public class BalanceData implements Serializable {
     private float MP = 0;
@@ -29,14 +29,14 @@ public class BalanceData implements Serializable {
     private DateTime Date;
     private boolean DatePassed = false;
 
-    public void setBalanceData(Document myDoc) {
-        Elements myTDTags = myDoc.getElementsByTag("TD");
+    public void setBalanceData(WatAccount myAccount) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.CANADA);
+
         try {
-            MP = numberFormat.parse(myTDTags.get(7).text()).floatValue() + numberFormat.parse(myTDTags.get(14).text()).floatValue() + numberFormat.parse(myTDTags.get(21).text()).floatValue() + numberFormat.parse(myTDTags.get(49).text()).floatValue();
-            FD = numberFormat.parse(myTDTags.get(42).text()).floatValue() + numberFormat.parse(myTDTags.get(35).text()).floatValue() + numberFormat.parse(myTDTags.get(28).text()).floatValue();
-            Other = numberFormat.parse(myTDTags.get(56).text()).floatValue() + numberFormat.parse(myTDTags.get(63).text()).floatValue() + numberFormat.parse(myTDTags.get(70).text()).floatValue() + numberFormat.parse(myTDTags.get(77).text()).floatValue() + numberFormat.parse(myTDTags.get(84).text()).floatValue();
-            Total = numberFormat.parse(myTDTags.get(91).text().substring(2)).floatValue();
+            MP = numberFormat.parse(String.valueOf(myAccount.getMealBalance())).floatValue();
+            FD = numberFormat.parse(String.valueOf(myAccount.getFlexBalance())).floatValue();
+            Other = numberFormat.parse(String.valueOf(myAccount.getOtherBalance())).floatValue();
+            Total = numberFormat.parse(String.valueOf(myAccount.getTotalBalance())).floatValue();
             Date = DateTime.now();
         } catch (Exception e) {
             e.printStackTrace();

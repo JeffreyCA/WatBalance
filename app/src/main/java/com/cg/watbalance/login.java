@@ -23,10 +23,10 @@ import com.cg.watbalance.service.Service;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.util.Calendar;
+
+import ca.jeffrey.watcard.WatAccount;
 
 public class login extends AppCompatActivity {
 
@@ -73,10 +73,11 @@ public class login extends AppCompatActivity {
                 myConn = new Connection(myConnDet, getApplicationContext()) {
 
                     @Override
-                    public void onResponseReceive(Document myDoc) {
-                        Element myNameTag = myDoc.getElementById("oneweb_account_name");
-                        String TempFirstName = myNameTag.text().split(",")[1];
-                        String TempLastName = myNameTag.text().split(",")[0];
+                    public void onResponseReceive(WatAccount myAccount) {
+                        myAccount.loadPersonalInfo();
+                        String FullName = myAccount.getName();
+                        String TempFirstName = FullName.split(",")[1];
+                        String TempLastName = FullName.split(",")[0];
                         String FirstName = WordUtils.capitalizeFully(TempFirstName.substring(0, TempFirstName.length() - 1));
                         String LastName = WordUtils.capitalizeFully(TempLastName);
                         myPrefEditor = myPreferences.edit();
