@@ -62,7 +62,7 @@ public class transactionScreen extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -116,7 +116,7 @@ public class transactionScreen extends AppCompatActivity
             @Override
             public void onDrawerClosed(View drawerView) {
                 switchScreen(id);
-                drawer.addDrawerListener(null);
+                // drawer.addDrawerListener(null);
             }
 
             @Override

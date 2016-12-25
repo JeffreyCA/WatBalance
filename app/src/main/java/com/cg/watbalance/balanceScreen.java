@@ -58,7 +58,7 @@ public class balanceScreen extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -101,7 +101,7 @@ public class balanceScreen extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         final int id = item.getItemId();
-
+        
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -115,7 +115,7 @@ public class balanceScreen extends AppCompatActivity
             @Override
             public void onDrawerClosed(View drawerView) {
                 switchScreen(id);
-                drawer.addDrawerListener(null);
+                // drawer.addDrawerListener(null);
             }
 
             @Override
@@ -139,6 +139,7 @@ public class balanceScreen extends AppCompatActivity
         } else if (id == R.id.nav_settings) {
             Intent myIntent = new Intent(this, Preferences.class);
             startActivity(myIntent);
+            Log.i("Settings", "Launch");
         } else if (id == R.id.nav_about) {
             Dialog dialog = new Dialog(this);
             dialog.setContentView(R.layout.about_dialog);
