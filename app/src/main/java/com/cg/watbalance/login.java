@@ -98,23 +98,20 @@ public class login extends AppCompatActivity {
                 myConn = new Connection(myConnDet, getApplicationContext()) {
                     @Override
                     public void onResponseReceive() {
-                        result.loadPersonalInfo();
-                        String FullName = result.getName();
-                        String TempFirstName = FullName.split(",")[1];
-                        String TempLastName = FullName.split(",")[0];
-                        String FirstName = WordUtils.capitalizeFully(TempFirstName.substring(0, TempFirstName.length() - 1));
-                        String LastName = WordUtils.capitalizeFully(TempLastName);
-                        myPrefEditor = myPreferences.edit();
-                        myPrefEditor.putString("Name", FirstName + " " + LastName);
-                        myPrefEditor.apply();
                     }
 
                     @Override
                     public void onComplete() {
                         Log.d("LOGIN", "SUCCESS");
                         String encryptedPIN = myEncryption.encryptPIN(pinNum.getText().toString());
+                        String FullName = result.getName();
+                        String TempFirstName = FullName.split(",")[1].trim();
+                        String TempLastName = FullName.split(",")[0].trim();
+                        String FirstName = WordUtils.capitalizeFully(TempFirstName.substring(0, TempFirstName.length()));
+                        String LastName = WordUtils.capitalizeFully(TempLastName);
 
                         myPrefEditor = myPreferences.edit();
+                        myPrefEditor.putString("Name", FirstName + " " + LastName);
                         myPrefEditor.putString("IDNum", IDNum.getText().toString());
                         myPrefEditor.putString("PinNum", encryptedPIN);
                         myPrefEditor.putInt("versionCode", BuildConfig.VERSION_CODE);

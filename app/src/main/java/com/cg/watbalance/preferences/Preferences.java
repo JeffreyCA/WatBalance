@@ -18,15 +18,14 @@ import com.cg.watbalance.R;
 import com.cg.watbalance.login;
 
 public class Preferences extends Activity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MyPreferenceFragment myPrefFrag = new MyPreferenceFragment();
-        // myPrefFrag.setContext(getBaseContext());
-        // getFragmentManager().beginTransaction().replace(android.R.id.content, myPrefFrag).commit();
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new MyPreferenceFragment())
-                .commit();
+        myPrefFrag.setContext(getApplicationContext());
+
+        getFragmentManager().beginTransaction().replace(android.R.id.content, myPrefFrag).commit();
     }
 
     @Override

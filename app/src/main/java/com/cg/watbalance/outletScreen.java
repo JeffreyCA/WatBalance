@@ -30,8 +30,8 @@ import com.cg.watbalance.preferences.FileManager;
 import com.cg.watbalance.preferences.Preferences;
 import com.cg.watbalance.service.Service;
 
-public class outletScreen extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class outletScreen extends AppCompatActivity {
+    public static int navItemIndex = 2;
 
     ListView lunchListView;
     ListView dinnerListView;
@@ -59,14 +59,8 @@ public class outletScreen extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
+        setUpNavigationView(this);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
         TextView name = (TextView) navigationView.getHeaderView(0).findViewById(R.id.Name);
         TextView id = (TextView) navigationView.getHeaderView(0).findViewById(R.id.IDText);
 
@@ -94,43 +88,92 @@ public class outletScreen extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+            drawer.closeDrawers();
         }
+        else {
+            Intent myIntent = new Intent(this, balanceScreen.class);
+            startActivity(myIntent);
+            finish();
+        }
+
+        finish();
+        super.onBackPressed();
     }
 
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        final int id = item.getItemId();
-
+    private void setUpNavigationView(final Context c) {
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
+            // This method will trigger on item Click of navigation menu
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                Intent myIntent;
+                //Check to see which item was being clicked and perform appropriate action
+                switch (menuItem.getItemId()) {
+                    //Replacing the main content with ContentFragment Which is our Inbox View;
+                    case R.id.nav_balance:
+                        myIntent = new Intent(c, balanceScreen.class);
+                        startActivity(myIntent);
+                        navItemIndex = 0;
+                        finish();
+                        break;
+                    case R.id.nav_transactions:
+                        myIntent = new Intent(c, transactionScreen.class);
+                        startActivity(myIntent);
+                        navItemIndex = 1;
+                        finish();
+                        break;
+                    case R.id.nav_outlets:
+                        navItemIndex = 2;
+                        drawer.closeDrawers();
+                        break;
+                    case R.id.nav_settings:
+                        myIntent = new Intent(c, Preferences.class);
+                        startActivity(myIntent);
+                        navItemIndex = 3;
+                        break;
+                    case R.id.nav_about:
+                        Dialog dialog = new Dialog(c);
+                        dialog.setContentView(R.layout.about_dialog);
+                        dialog.setTitle("About");
+                        dialog.show();
+                        navItemIndex = 4;
+                        break;
+                    default:
+                        navItemIndex = 0;
+                }
+
+                menuItem.setChecked(false);
+                drawer.closeDrawers();
+
+                return true;
+            }
+        });
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-
+                super.onDrawerOpened(drawerView);
             }
+        };
 
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                switchScreen(id);
-                // drawer.addDrawerListener(null);
-            }
+        //Setting the actionbarToggle to drawer layout
+        drawer.addDrawerListener(actionBarDrawerToggle);
 
-            @Override
-            public void onDrawerStateChanged(int newState) {
-
-            }
-        });
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+        //calling sync state is necessary or else your hamburger icon wont show up
+        actionBarDrawerToggle.syncState();
     }
 
     public void switchScreen(int id) {

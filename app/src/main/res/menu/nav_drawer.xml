@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <group android:checkableBehavior="single">
     <item android:title="WatBalance">
         <menu>
             <item
@@ -17,6 +18,7 @@
                 android:title="Outlets" />
         </menu>
     </item>
+    </group>
     <item android:title="Manage">
         <menu>
             <item

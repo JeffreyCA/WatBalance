@@ -12,6 +12,10 @@
         <item name="colorAccent">@color/colorMaterialGreen</item>
     </style>
 
+    <style name="ColorTheme.Preferences">
+        <item name="colorAccent">@color/colorMaterialGreen</item>
+    </style>
+
     <style name="ColorTheme.MainWindow">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
