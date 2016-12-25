@@ -111,7 +111,7 @@ public abstract class Connection {
             Log.d("DATA", "RECEIVED");
             myBalData.setDailyBalance(myTransData, myContext);
             myOutletData.setOutletStatus(outletResponse);
-            myTransData.setBuildingTitle(buildingResponse);
+            // myTransData.setBuildingTitle(buildingResponse);
 
             FileManager myFM = new FileManager(myContext);
             myFM.openFileOutput("myBalData");

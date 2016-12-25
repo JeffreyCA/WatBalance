@@ -1,6 +1,7 @@
 package com.cg.watbalance.data.transaction;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -36,7 +37,8 @@ public class TransactionData implements Serializable {
         Thread t = new Thread(new Runnable (){
             @Override
             public void run() {
-                myTransList = myAccount.getLastDaysTransactions(60, false);
+                int days = LocalDateTime.now().getDayOfMonth() - 1;
+                myTransList = myAccount.getLastDaysTransactions(days, false);
             }
         });
 
@@ -46,7 +48,6 @@ public class TransactionData implements Serializable {
             t.join();
         }
         catch (Exception E) {
-
         }
 
     }
@@ -54,9 +55,10 @@ public class TransactionData implements Serializable {
     public void setBuildingTitle(String response) {
         try {
             JSONArray buildingArray = new JSONObject(response).getJSONArray("data");
+            Log.i("Response", response);
             for (int i = 0; i < myTransList.size(); i++) {
                 for (int j = 0; j < buildingArray.length(); j++) {
-                    String buildingCode = myTransList.get(i).getTerminal().split("-")[0];
+                    String buildingCode = myTransList.get(i).getCleanTerminal().split(" : ")[0];
                     if (buildingCode.equals(buildingArray.getJSONObject(j).getString("building_code"))) {
                         myTransList.get(i).setTerminal(buildingArray.getJSONObject(j).getString("building_name"));
                     }
@@ -76,8 +78,10 @@ public class TransactionData implements Serializable {
         LocalDateTime lastDate = firstTrans.getDateTime();
         PointValue myPoint = new PointValue((float) lastDate.getDayOfMonth(), -firstTrans.getAmount());
 
+
         for (int i = 1; i < myTransList.size(); i++) {
             WatTransaction currentTrans = myTransList.get(i);
+
             if (!lastDate.truncatedTo(ChronoUnit.DAYS).isEqual(currentTrans.getDateTime().truncatedTo(ChronoUnit.DAYS))) {
                 myPoint.setLabel(NumberFormat.getCurrencyInstance(Locale.CANADA).format(myPoint.getY()));
                 myPointList.add(myPoint);

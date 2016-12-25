@@ -21,22 +21,10 @@ public class ConnectionDetails {
         myIDNum = newIDNum;
         myPinNum = newPinNum;
 
-        Thread t = new Thread(new Runnable (){
-            @Override
-            public void run() {
-                myAccount = new WatAccount(newIDNum, newPinNum);
-                myAccount.login();
-                myAccount.loadBalances();
-                myAccount.loadPersonalInfo();
-            }
-        });
-
-        t.start();
-
-        try {
-            t.join();
-        }
-        catch (Exception E) {}
+        myAccount = new WatAccount(newIDNum, newPinNum);
+        myAccount.login();
+        myAccount.loadBalances();
+        myAccount.loadPersonalInfo();
     }
 
 

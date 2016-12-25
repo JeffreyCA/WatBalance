@@ -48,8 +48,8 @@ public class TransactionListAdapter extends BaseAdapter {
         holder.Time = (TextView) rowView.findViewById(R.id.tranTime);
         holder.Amount = (TextView) rowView.findViewById(R.id.tranAmt);
 
-        holder.Title.setText(transList.get(position).getTerminal());
-        holder.Type.setText(transList.get(position).getType());
+        holder.Title.setText(transList.get(position).getCleanTerminal());
+        holder.Type.setText(transList.get(position).getTypeString());
         holder.Time.setText(transList.get(position).getTimeString());
         holder.Amount.setText(transList.get(position).getAmountString());
         return rowView;

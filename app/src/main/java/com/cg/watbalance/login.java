@@ -2,10 +2,12 @@ package com.cg.watbalance;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -68,19 +70,36 @@ public class login extends AppCompatActivity {
             finish();
         }
 
-        mySaveButton.setOnClickListener(new View.OnClickListener() {
+        forgotPIN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myConnDet = new ConnectionDetails(IDNum.getText().toString(), pinNum.getText().toString());
+                String resetURL = "https://watcard.uwaterloo.ca/OneWeb/Account/ResetPin";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(resetURL));
+                startActivity(i);
+            }
+        });
+    }
 
-                final WatAccount myAccount = myConnDet.getAccount();
+    public void onButtonClick(View v) {
+        final String id = IDNum.getText().toString();
+        final String pin = pinNum.getText().toString();
+        final ProgressDialog progress = new ProgressDialog(login.this);
+        class EstablishConnection extends AsyncTask<String, Void, WatAccount> {
 
+            @Override
+            protected WatAccount doInBackground(String... params) {
+                myConnDet = new ConnectionDetails(id, pin);
+                return myConnDet.getAccount();
+            }
+
+            @Override
+            protected void onPostExecute(final WatAccount result) {
                 myConn = new Connection(myConnDet, getApplicationContext()) {
-
                     @Override
                     public void onResponseReceive() {
-                        myAccount.loadPersonalInfo();
-                        String FullName = myAccount.getName();
+                        result.loadPersonalInfo();
+                        String FullName = result.getName();
                         String TempFirstName = FullName.split(",")[1];
                         String TempLastName = FullName.split(",")[0];
                         String FirstName = WordUtils.capitalizeFully(TempFirstName.substring(0, TempFirstName.length() - 1));
@@ -124,76 +143,24 @@ public class login extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Incorrect Login Information", Toast.LENGTH_LONG).show();
                     }
                 };
+                // To dismiss the dialog
+                progress.dismiss();
                 myConn.getData();
             }
-        });
 
-        forgotPIN.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                String resetURL = "https://watcard.uwaterloo.ca/OneWeb/Account/ResetPin";
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(resetURL));
-                startActivity(i);
-            }
-        });
-    }
-
-    public void onButtonClick(View v) {
-        myConnDet = new ConnectionDetails(IDNum.getText().toString(), pinNum.getText().toString());
-
-        final WatAccount myAccount = myConnDet.getAccount();
-
-        myConn = new Connection(myConnDet, getApplicationContext()) {
-            @Override
-            public void onResponseReceive() {
-                myAccount.loadPersonalInfo();
-                String FullName = myAccount.getName();
-                String TempFirstName = FullName.split(",")[1];
-                String TempLastName = FullName.split(",")[0];
-                String FirstName = WordUtils.capitalizeFully(TempFirstName.substring(0, TempFirstName.length() - 1));
-                String LastName = WordUtils.capitalizeFully(TempLastName);
-                myPrefEditor = myPreferences.edit();
-                myPrefEditor.putString("Name", FirstName + " " + LastName);
-                myPrefEditor.apply();
+            protected void onPreExecute() {
+                progress.setTitle("Loading");
+                progress.setMessage("Logging in...");
+                progress.setCancelable(false);
+                progress.show();
             }
 
             @Override
-            public void onComplete() {
-                Log.d("LOGIN", "SUCCESS");
-                String encryptedPIN = myEncryption.encryptPIN(pinNum.getText().toString());
+            protected void onProgressUpdate(Void... values) {}
+        }
 
-                myPrefEditor = myPreferences.edit();
-                myPrefEditor.putString("IDNum", IDNum.getText().toString());
-                myPrefEditor.putString("PinNum", encryptedPIN);
-                myPrefEditor.putInt("versionCode", BuildConfig.VERSION_CODE);
-                myPrefEditor.putBoolean("login", true);
-                myPrefEditor.apply();
-
-                startRepeat();
-                setTermEnd();
-
-                Intent myIntent = new Intent(login.this, balanceScreen.class);
-                startActivity(myIntent);
-                finish();
-            }
-
-            @Override
-            public void beforeConnect() {
-            }
-
-            @Override
-            public void onConnectionError() {
-                Toast.makeText(getApplicationContext(), "Connection Error", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onIncorrectLogin() {
-                Toast.makeText(getApplicationContext(), "Incorrect Login Information", Toast.LENGTH_LONG).show();
-            }
-        };
-        myConn.getData();
-
+        new EstablishConnection().execute();
     }
     public void startRepeat() {
         AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);

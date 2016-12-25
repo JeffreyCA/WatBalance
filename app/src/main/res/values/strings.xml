@@ -46,4 +46,5 @@
     <string name="title_activity_transaction_screen">Transactions</string>
     <string name="title_activity_outlet_screen">Outlets</string>
 
+    <string name="default_amount">$0.00</string>
 </resources>
