@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.cg.watbalance.R;
 import com.cg.watbalance.balanceScreen;
@@ -21,16 +22,30 @@ import com.cg.watbalance.preferences.ConnectionDetails;
 import com.cg.watbalance.preferences.Encryption;
 import com.cg.watbalance.preferences.FileManager;
 
+import java.net.InetAddress;
+
 import ca.jeffrey.watcard.WatAccount;
 
 public class Service extends BroadcastReceiver {
     Connection myConn;
     ConnectionDetails myConnDet;
+    private boolean internetAvailable;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("SERVICE", "REQUEST RECEIVED");
         initializeService(context);
+    }
+
+    // Check if internet is available
+    private boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("watcard.uwaterloo.ca");
+            return !ipAddr.equals("");
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public void initializeService(final Context context) {
@@ -39,8 +54,15 @@ public class Service extends BroadcastReceiver {
             protected WatAccount doInBackground(String... strings) {
                 Encryption myEncryption = new Encryption(context);
                 SharedPreferences myLoginPref = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-                myConnDet = new ConnectionDetails(myLoginPref.getString("IDNum", "00000000"), myEncryption.decryptPIN(myLoginPref.getString("PinNum", "0000")));
-                return myConnDet.getAccount();
+
+                internetAvailable = isInternetAvailable();
+                if (internetAvailable) {
+                    myConnDet = new ConnectionDetails(myLoginPref.getString("IDNum", "00000000"), myEncryption.decryptPIN(myLoginPref.getString("PinNum", "0000")));
+                    return myConnDet.getAccount();
+                }
+                else {
+                    return null;
+                }
             }
 
             @Override
@@ -79,6 +101,7 @@ public class Service extends BroadcastReceiver {
 
                     @Override
                     public void onConnectionError() {
+                        Toast.makeText(context.getApplicationContext(), "Connection Error!", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -90,7 +113,12 @@ public class Service extends BroadcastReceiver {
                     }
                 };
 
-                myConn.getData();
+                if (internetAvailable) {
+                    myConn.getData();
+                }
+                else {
+                    myConn.onConnectionError();
+                }
             }
         }
         new EstablishConnection().execute();

@@ -122,10 +122,6 @@ public class login extends AppCompatActivity {
             protected void onPostExecute(final WatAccount result) {
                 myConn = new Connection(myConnDet, getApplicationContext()) {
                     @Override
-                    public void onResponseReceive() {
-                    }
-
-                    @Override
                     public void onComplete() {
                         Log.d("LOGIN", "SUCCESS");
                         String encryptedPIN = myEncryption.encryptPIN(pinNum.getText().toString());
@@ -163,6 +159,9 @@ public class login extends AppCompatActivity {
                     @Override
                     public void onIncorrectLogin() {
                         Toast.makeText(getApplicationContext(), "Incorrect Login Information!", Toast.LENGTH_LONG).show();
+                    }
+                    @Override
+                    public void onResponseReceive() {
                     }
                 };
 
