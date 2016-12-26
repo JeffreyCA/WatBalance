@@ -35,11 +35,9 @@ public abstract class Connection {
 
         beforeConnect();
 
-        // Add the request to the RequestQueue.
         createBalanceRequest();
         createTransHistoryRequest();
 
-        // queue.add(createTransHistoryRequest());
         queue.add(createMenuRequest());
         queue.add(createOutletRequest());
         queue.add(createBuildingRequest());

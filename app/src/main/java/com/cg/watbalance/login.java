@@ -25,7 +25,7 @@ import com.cg.watbalance.service.Service;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.DateTime;
+import org.threeten.bp.LocalDateTime;
 
 import java.util.Calendar;
 
@@ -85,6 +85,7 @@ public class login extends AppCompatActivity {
         final String id = IDNum.getText().toString();
         final String pin = pinNum.getText().toString();
         final ProgressDialog progress = new ProgressDialog(login.this);
+
         class EstablishConnection extends AsyncTask<String, Void, WatAccount> {
 
             @Override
@@ -141,8 +142,9 @@ public class login extends AppCompatActivity {
                     }
                 };
                 // To dismiss the dialog
-                progress.dismiss();
+
                 myConn.getData();
+                progress.dismiss();
             }
 
             @Override
@@ -167,9 +169,9 @@ public class login extends AppCompatActivity {
     }
 
     public void setTermEnd() {
-        int month = DateTime.now().getMonthOfYear();
-        int year = DateTime.now().getYear();
-        int day = DateTime.now().getDayOfMonth();
+        int month = LocalDateTime.now().getMonthValue();
+        int year = LocalDateTime.now().getYear();
+        int day = LocalDateTime.now().getDayOfMonth();
 
         switch (month) {
             case 1:

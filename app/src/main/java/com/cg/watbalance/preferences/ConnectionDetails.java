@@ -1,7 +1,5 @@
 package com.cg.watbalance.preferences;
 
-import org.joda.time.DateTime;
-
 import ca.jeffrey.watcard.WatAccount;
 
 public class ConnectionDetails {
@@ -27,22 +25,8 @@ public class ConnectionDetails {
         myAccount.loadPersonalInfo();
     }
 
-
-    public String getBalanceURL() {
-        return myBalanceURL;
-    }
-
     public WatAccount getAccount() {
         return myAccount;
-    }
-
-    public String getTransactionURL() {
-        DateTime myDate = DateTime.now();
-        int month = myDate.getMonthOfYear();
-        int lastDayOfMonth = myDate.dayOfMonth().getMaximumValue();
-        int year = myDate.getYear();
-
-        return uWaterlooURL + "acnt_1=" + myIDNum + "&acnt_2=" + myPinNum + "&DBDATE=" + month + "%2F1%2F" + year + "&DEDATE=" + month + "%2F" + lastDayOfMonth + "%2F" + year + "&PASS=PASS&STATUS=HIST";
     }
 
     public String getFoodURL() {

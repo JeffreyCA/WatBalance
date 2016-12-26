@@ -1,14 +1,7 @@
 package com.cg.watbalance.data.transaction;
 
 import android.graphics.Color;
-import android.util.Log;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.jsoup.nodes.Element;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.temporal.ChronoUnit;
 
@@ -29,10 +22,6 @@ import lecho.lib.hellocharts.model.PointValue;
 public class TransactionData implements Serializable {
     private List<WatTransaction> myTransList;
 
-    public List<WatTransaction> getTransList() {
-        return myTransList;
-    }
-
     public void setTransList(final WatAccount myAccount) {
         Thread t = new Thread(new Runnable (){
             @Override
@@ -47,24 +36,7 @@ public class TransactionData implements Serializable {
         try {
             t.join();
         }
-        catch (Exception E) {
-        }
-
-    }
-
-    public void setBuildingTitle(String response) {
-        try {
-            JSONArray buildingArray = new JSONObject(response).getJSONArray("data");
-            Log.i("Response", response);
-            for (int i = 0; i < myTransList.size(); i++) {
-                for (int j = 0; j < buildingArray.length(); j++) {
-                    String buildingCode = myTransList.get(i).getCleanTerminal().split(" : ")[0];
-                    if (buildingCode.equals(buildingArray.getJSONObject(j).getString("building_code"))) {
-                        myTransList.get(i).setTerminal(buildingArray.getJSONObject(j).getString("building_name"));
-                    }
-                }
-            }
-        } catch (Exception e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -127,71 +99,7 @@ public class TransactionData implements Serializable {
         return myXAxis;
     }
 
-
-    public class Transaction implements Serializable {
-        private String title;
-        private int type;
-        private DateTime date;
-        private float amount;
-
-        public Transaction(Element myElement) {
-            String dateTime = myElement.getElementById("oneweb_financial_history_td_date").text() + " " + myElement.getElementById("oneweb_financial_history_td_time").text();
-            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.CANADA);
-            DateTimeFormatter myDateFormat = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm:ss");
-            try {
-                date = DateTime.parse(dateTime, myDateFormat);
-                amount = numberFormat.parse(myElement.getElementById("oneweb_financial_history_td_amount").text()).floatValue();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            title = myElement.getElementById("oneweb_financial_history_td_terminal").text().substring(7);
-            if (title.contains("WAT-FS")) {
-                type = 0; // 0 = Meal Plan
-                title = title.substring(7); // remove "WAT-FS"
-            } else {
-                type = 1; // 1 = Flex Dollars
-            }
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String newTitle) {
-            title = newTitle;
-        }
-
-        public String getAmountString() {
-            return NumberFormat.getCurrencyInstance(Locale.CANADA).format(amount);
-        }
-
-        public String getTimeString() {
-            DateTimeFormatter myFormat = DateTimeFormat.forPattern("dd MMM 'at' h:mm aa");
-            return myFormat.print(date);
-        }
-
-        public float getAmount() {
-            return amount;
-        }
-
-        public DateTime getDate() {
-            return date;
-        }
-
-        public String getTypeString() {
-            switch (type) {
-                case 0: {
-                    return "Meal Plan";
-                }
-                default: {
-                    return "Flex Dollars";
-                }
-            }
-        }
-
-        public int getType() {
-            return type;
-        }
+    public List<WatTransaction> getTransList() {
+        return myTransList;
     }
-
 }

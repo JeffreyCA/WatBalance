@@ -42,6 +42,7 @@ public class Service extends BroadcastReceiver {
                 myConnDet = new ConnectionDetails(myLoginPref.getString("IDNum", "00000000"), myEncryption.decryptPIN(myLoginPref.getString("PinNum", "0000")));
                 return myConnDet.getAccount();
             }
+
             @Override
             protected void onPostExecute(final WatAccount result) {
                 myConn = new Connection(myConnDet, context) {
@@ -74,24 +75,21 @@ public class Service extends BroadcastReceiver {
 
                     @Override
                     public void beforeConnect() {
-
                     }
 
                     @Override
                     public void onConnectionError() {
-
                     }
 
                     @Override
                     public void onIncorrectLogin() {
-
                     }
 
                     @Override
                     public void onResponseReceive() {
-
                     }
                 };
+
                 myConn.getData();
             }
         }
@@ -111,5 +109,4 @@ public class Service extends BroadcastReceiver {
                 .setVisibility(NotificationCompat.VISIBILITY_SECRET);
         notificationManager.notify(1, notificationBuilder.build());
     }
-
 }

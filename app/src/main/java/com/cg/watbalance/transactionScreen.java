@@ -28,7 +28,8 @@ import com.cg.watbalance.preferences.FileManager;
 import com.cg.watbalance.preferences.Preferences;
 import com.cg.watbalance.service.Service;
 
-import org.joda.time.DateTime;
+import org.apache.commons.lang3.text.WordUtils;
+import org.threeten.bp.LocalDateTime;
 
 import lecho.lib.hellocharts.view.LineChartView;
 
@@ -178,7 +179,7 @@ public class transactionScreen extends AppCompatActivity {
         transChart.setValueSelectionEnabled(true);
 
         TextView month = (TextView) findViewById(R.id.month);
-        month.setText(DateTime.now().monthOfYear().getAsText());
+        month.setText(WordUtils.capitalizeFully(LocalDateTime.now().getMonth().name()));
 
         ListView transList = (ListView) findViewById(R.id.transList);
         transList.setAdapter(new TransactionListAdapter(getApplicationContext(), myTransData.getTransList()));

@@ -1,9 +1,11 @@
 package com.cg.watbalance.data;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -61,9 +63,12 @@ public class OutletData implements Serializable {
                 JSONArray menu = myOutlet.getJSONArray("menu");
                 lunch = new Meal();
                 dinner = new Meal();
+                DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
                 for (int i = 0; i < menu.length(); i++) {
-                    DateTime tempDate = DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(menu.getJSONObject(i).getString("date"));
-                    Boolean sameDay = DateTime.now().withTimeAtStartOfDay().equals(tempDate);
+                    Log.i("T", "test");
+                    LocalDate tempDate = LocalDate.parse(menu.getJSONObject(i).getString("date"), myFormat);
+                    Boolean sameDay = LocalDate.now().isEqual(tempDate);
                     if (sameDay) {
                         lunch.addFood(menu.getJSONObject(i).getJSONObject("meals").getJSONArray("lunch"));
                         dinner.addFood(menu.getJSONObject(i).getJSONObject("meals").getJSONArray("dinner"));
