@@ -27,6 +27,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 import org.apache.commons.lang3.text.WordUtils;
 import org.threeten.bp.LocalDateTime;
 
+import java.net.InetAddress;
 import java.util.Calendar;
 
 import ca.jeffrey.watcard.WatAccount;
@@ -42,6 +43,8 @@ public class login extends AppCompatActivity {
     Encryption myEncryption;
     SharedPreferences myPreferences;
     SharedPreferences.Editor myPrefEditor;
+
+    private boolean internetAvailable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,16 +84,37 @@ public class login extends AppCompatActivity {
         });
     }
 
+    // Check if internet is available
+    private boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("watcard.uwaterloo.ca");
+            return !ipAddr.equals("");
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public void onButtonClick(View v) {
         final String id = IDNum.getText().toString();
         final String pin = pinNum.getText().toString();
         final ProgressDialog progress = new ProgressDialog(login.this);
 
         class EstablishConnection extends AsyncTask<String, Void, WatAccount> {
-
             @Override
             protected WatAccount doInBackground(String... params) {
-                myConnDet = new ConnectionDetails(id, pin);
+                internetAvailable = isInternetAvailable();
+                if (!internetAvailable) {
+                    return null;
+                }
+
+                try {
+                    myConnDet = new ConnectionDetails(id, pin);
+                }
+                catch (NullPointerException e) {
+                    return null;
+                }
+
                 return myConnDet.getAccount();
             }
 
@@ -133,17 +157,24 @@ public class login extends AppCompatActivity {
 
                     @Override
                     public void onConnectionError() {
-                        Toast.makeText(getApplicationContext(), "Connection Error", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Connection Error!", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onIncorrectLogin() {
-                        Toast.makeText(getApplicationContext(), "Incorrect Login Information", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Incorrect Login Information!", Toast.LENGTH_LONG).show();
                     }
                 };
-                // To dismiss the dialog
 
-                myConn.getData();
+                if (!internetAvailable) {
+                    myConn.onConnectionError();
+                }
+                else if (result == null) {
+                    myConn.onIncorrectLogin();
+                }
+                else {
+                    myConn.getData();
+                }
                 progress.dismiss();
             }
 
@@ -219,5 +250,4 @@ public class login extends AppCompatActivity {
         }
         myPrefEditor.apply();
     }
-
 }

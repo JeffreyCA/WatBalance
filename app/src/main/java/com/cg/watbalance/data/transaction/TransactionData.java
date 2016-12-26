@@ -21,8 +21,10 @@ import lecho.lib.hellocharts.model.PointValue;
 
 public class TransactionData implements Serializable {
     private List<WatTransaction> myTransList;
+    private boolean exception;
 
     public void setTransList(final WatAccount myAccount) {
+        exception = false;
         Thread t = new Thread(new Runnable (){
             @Override
             public void run() {

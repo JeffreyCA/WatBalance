@@ -15,14 +15,15 @@ public class ConnectionDetails {
 
     private WatAccount myAccount;
 
-    public ConnectionDetails(final String newIDNum, final String newPinNum) {
+    public ConnectionDetails(final String newIDNum, final String newPinNum){
         myIDNum = newIDNum;
         myPinNum = newPinNum;
 
-        myAccount = new WatAccount(newIDNum, newPinNum);
-        myAccount.login();
-        myAccount.loadBalances();
-        myAccount.loadPersonalInfo();
+            myAccount = new WatAccount(newIDNum, newPinNum);
+            myAccount.login();
+            myAccount.loadBalances();
+            myAccount.loadPersonalInfo();
+
     }
 
     public WatAccount getAccount() {
