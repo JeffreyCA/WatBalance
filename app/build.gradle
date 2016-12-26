@@ -15,8 +15,8 @@ android {
         applicationId "com.cg.watbalance"
         minSdkVersion 18
         targetSdkVersion 25
-        versionCode 9
-        versionName "6.5"
+        versionCode 10
+        versionName "7.0"
     }
     buildTypes {
         release {
@@ -37,7 +37,7 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
     compile 'com.android.support:support-v4:25.1.0'
-    compile 'com.jakewharton.threetenabp:threetenabp:1.0.4'
+    compile 'ca.jeffrey.watcard:watcard-android:1.3'
 }
 
 
