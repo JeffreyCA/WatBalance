@@ -39,6 +39,3 @@ dependencies {
     compile 'com.android.support:support-v4:25.1.0'
     compile 'ca.jeffrey.watcard:watcard-android:1.4'
 }
-
-
-
