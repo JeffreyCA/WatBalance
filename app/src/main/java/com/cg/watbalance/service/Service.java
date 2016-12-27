@@ -54,7 +54,6 @@ public class Service extends BroadcastReceiver {
             protected WatAccount doInBackground(String... strings) {
                 Encryption myEncryption = new Encryption(context);
                 SharedPreferences myLoginPref = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-
                 internetAvailable = isInternetAvailable();
 
                 if (internetAvailable) {
@@ -114,6 +113,7 @@ public class Service extends BroadcastReceiver {
 
                     @Override
                     public void onIncorrectLogin() {
+                        Toast.makeText(context.getApplicationContext(), "Incorrect Login Information!", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -132,7 +132,9 @@ public class Service extends BroadcastReceiver {
                 }
             }
         }
+
         new EstablishConnection().execute();
+
     }
 
     public void createNotification(BalanceData myBalData, Context myContext) {
