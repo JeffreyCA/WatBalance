@@ -56,8 +56,16 @@ public class Service extends BroadcastReceiver {
                 SharedPreferences myLoginPref = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
 
                 internetAvailable = isInternetAvailable();
+
                 if (internetAvailable) {
-                    myConnDet = new ConnectionDetails(myLoginPref.getString("IDNum", "00000000"), myEncryption.decryptPIN(myLoginPref.getString("PinNum", "0000")));
+                    try {
+                        myConnDet = new ConnectionDetails(myLoginPref.getString("IDNum", "00000000"),
+                                myEncryption.decryptPIN(myLoginPref.getString("PinNum", "0000")));
+                    }
+                    catch (IllegalArgumentException e) {
+                        return null;
+                    }
+
                     return myConnDet.getAccount();
                 }
                 else {
@@ -113,11 +121,14 @@ public class Service extends BroadcastReceiver {
                     }
                 };
 
-                if (internetAvailable) {
-                    myConn.getData();
+                if (!internetAvailable) {
+                    myConn.onConnectionError();
+                }
+                else if (result == null) {
+                    myConn.onIncorrectLogin();
                 }
                 else {
-                    myConn.onConnectionError();
+                    myConn.getData();
                 }
             }
         }
