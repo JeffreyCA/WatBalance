@@ -13,7 +13,7 @@ public class ConnectionDetails {
 
     private WatAccount myAccount;
 
-    public ConnectionDetails(final String newIDNum, final String newPinNum) throws IllegalArgumentException {
+    public ConnectionDetails(String newIDNum, String newPinNum) throws IllegalArgumentException {
         myIDNum = newIDNum;
         myPinNum = newPinNum;
 
