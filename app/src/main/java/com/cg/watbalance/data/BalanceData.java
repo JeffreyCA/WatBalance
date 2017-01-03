@@ -66,7 +66,7 @@ public class BalanceData implements Serializable {
             switch (DailyBalConfig) {
                 case 2: {
                     for (int i = 0; i < myTransList.size(); i++) {
-                        boolean isToday = myTransList.get(i).getDateTime().truncatedTo(ChronoUnit.DAYS).equals(today);
+                        boolean isToday = myTransList.get(i).getDateTime().toLocalDate().isEqual(today);
                         boolean isMealPlan = !myTransList.get(i).isFlex();
                         if (isToday && isMealPlan) {
                             todaySpent += myTransList.get(i).getAmount();
@@ -77,8 +77,9 @@ public class BalanceData implements Serializable {
                 }
                 case 3: {
                     for (int i = 0; i < myTransList.size(); i++) {
-                        boolean isToday = myTransList.get(i).getDateTime().truncatedTo(ChronoUnit.DAYS).equals(today);
+                        boolean isToday = myTransList.get(i).getDateTime().toLocalDate().isEqual(today);
                         boolean isFlexDollar = myTransList.get(i).isFlex();
+
                         if (isToday && isFlexDollar) {
                             todaySpent += myTransList.get(i).getAmount();
                         }
@@ -88,7 +89,7 @@ public class BalanceData implements Serializable {
                 }
                 default: {
                     for (int i = 0; i < myTransList.size(); i++) {
-                        boolean isToday = myTransList.get(i).getDateTime().truncatedTo(ChronoUnit.DAYS).equals(today);
+                        boolean isToday = myTransList.get(i).getDateTime().toLocalDate().isEqual(today);
                         if (isToday) {
                             todaySpent += myTransList.get(i).getAmount();
                         }

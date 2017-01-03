@@ -3,7 +3,6 @@ package com.cg.watbalance.data.transaction;
 import android.graphics.Color;
 
 import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.temporal.ChronoUnit;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
@@ -53,10 +52,10 @@ public class TransactionData implements Serializable {
         PointValue myPoint = new PointValue((float) lastDate.getDayOfMonth(), -firstTrans.getAmount());
 
 
-        for (int i = 1; i < myTransList.size(); i++) {
+        for (int i = 0; i < myTransList.size(); i++) {
             WatTransaction currentTrans = myTransList.get(i);
 
-            if (!lastDate.truncatedTo(ChronoUnit.DAYS).isEqual(currentTrans.getDateTime().truncatedTo(ChronoUnit.DAYS))) {
+            if (!lastDate.toLocalDate().isEqual(currentTrans.getDateTime().toLocalDate())) {
                 myPoint.setLabel(NumberFormat.getCurrencyInstance(Locale.CANADA).format(myPoint.getY()));
                 myPointList.add(myPoint);
                 lastDate = currentTrans.getDateTime();
