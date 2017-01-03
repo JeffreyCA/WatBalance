@@ -67,7 +67,8 @@ public class BalanceData implements Serializable {
                 case 2: {
                     for (int i = 0; i < myTransList.size(); i++) {
                         boolean isToday = myTransList.get(i).getDateTime().toLocalDate().isEqual(today);
-                        boolean isMealPlan = !myTransList.get(i).isFlex();
+                        boolean isMealPlan = myTransList.get(i).isMeal();
+
                         if (isToday && isMealPlan) {
                             todaySpent += myTransList.get(i).getAmount();
                         }
