@@ -45,25 +45,26 @@ public class TransactionData implements Serializable {
     public List<PointValue> makeDayPointValues() {
         List<PointValue> myPointList = new ArrayList<>();
 
-        if(myTransList.size() == 0) return myPointList;
+        if (myTransList.size() == 0) return myPointList;
 
         WatTransaction firstTrans = myTransList.get(0);
         LocalDateTime lastDate = firstTrans.getDateTime();
         PointValue myPoint = new PointValue((float) lastDate.getDayOfMonth(), -firstTrans.getAmount());
 
-
-        for (int i = 0; i < myTransList.size(); i++) {
+        for (int i = 1; i < myTransList.size(); i++) {
             WatTransaction currentTrans = myTransList.get(i);
 
             if (!lastDate.toLocalDate().isEqual(currentTrans.getDateTime().toLocalDate())) {
                 myPoint.setLabel(NumberFormat.getCurrencyInstance(Locale.CANADA).format(myPoint.getY()));
                 myPointList.add(myPoint);
+
                 lastDate = currentTrans.getDateTime();
                 myPoint = new PointValue(lastDate.getDayOfMonth(), -currentTrans.getAmount());
             } else {
                 myPoint.set(myPoint.getX(), myPoint.getY() + -currentTrans.getAmount());
             }
         }
+
         myPoint.setLabel(NumberFormat.getCurrencyInstance(Locale.CANADA).format(myPoint.getY()));
         myPointList.add(myPoint);
         return myPointList;
