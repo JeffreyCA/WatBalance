@@ -21,6 +21,7 @@ import com.cg.watbalance.preferences.Connection;
 import com.cg.watbalance.preferences.ConnectionDetails;
 import com.cg.watbalance.preferences.Encryption;
 import com.cg.watbalance.preferences.FileManager;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.net.InetAddress;
 
@@ -34,6 +35,7 @@ public class Service extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("SERVICE", "REQUEST RECEIVED");
+        AndroidThreeTen.init(context);
         initializeService(context);
     }
 
