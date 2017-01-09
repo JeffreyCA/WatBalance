@@ -3,7 +3,6 @@ package com.cg.watbalance.data.transaction;
 import android.graphics.Color;
 
 import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.temporal.ChronoUnit;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
@@ -46,25 +45,26 @@ public class TransactionData implements Serializable {
     public List<PointValue> makeDayPointValues() {
         List<PointValue> myPointList = new ArrayList<>();
 
-        if(myTransList.size() == 0) return myPointList;
+        if (myTransList.size() == 0) return myPointList;
 
         WatTransaction firstTrans = myTransList.get(0);
         LocalDateTime lastDate = firstTrans.getDateTime();
         PointValue myPoint = new PointValue((float) lastDate.getDayOfMonth(), -firstTrans.getAmount());
 
-
         for (int i = 1; i < myTransList.size(); i++) {
             WatTransaction currentTrans = myTransList.get(i);
 
-            if (!lastDate.truncatedTo(ChronoUnit.DAYS).isEqual(currentTrans.getDateTime().truncatedTo(ChronoUnit.DAYS))) {
+            if (!lastDate.toLocalDate().isEqual(currentTrans.getDateTime().toLocalDate())) {
                 myPoint.setLabel(NumberFormat.getCurrencyInstance(Locale.CANADA).format(myPoint.getY()));
                 myPointList.add(myPoint);
+
                 lastDate = currentTrans.getDateTime();
                 myPoint = new PointValue(lastDate.getDayOfMonth(), -currentTrans.getAmount());
             } else {
                 myPoint.set(myPoint.getX(), myPoint.getY() + -currentTrans.getAmount());
             }
         }
+
         myPoint.setLabel(NumberFormat.getCurrencyInstance(Locale.CANADA).format(myPoint.getY()));
         myPointList.add(myPoint);
         return myPointList;

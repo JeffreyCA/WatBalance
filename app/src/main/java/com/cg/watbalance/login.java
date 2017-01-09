@@ -111,7 +111,7 @@ public class login extends AppCompatActivity {
                 try {
                     myConnDet = new ConnectionDetails(id, pin);
                 }
-                catch (NullPointerException e) {
+                catch (IllegalArgumentException e) {
                     return null;
                 }
 

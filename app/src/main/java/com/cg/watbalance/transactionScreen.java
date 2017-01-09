@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,6 +36,7 @@ import lecho.lib.hellocharts.view.LineChartView;
 
 public class transactionScreen extends AppCompatActivity {
     public static int navItemIndex = 1;
+    FloatingActionButton fab;
 
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {
         @Override
@@ -51,7 +53,8 @@ public class transactionScreen extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -184,6 +187,26 @@ public class transactionScreen extends AppCompatActivity {
         ListView transList = (ListView) findViewById(R.id.transList);
         transList.setAdapter(new TransactionListAdapter(getApplicationContext(), myTransData.getTransList()));
         transList.setEmptyView(findViewById(R.id.empty_transactions));
+
+        // Hide fab on scroll so balances are not blocked
+        transList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                int initialY = fab.getScrollY();
+
+                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+                    fab.animate().cancel();
+                    fab.animate().translationYBy(250);
+                } else {
+                    fab.animate().cancel();
+                    fab.animate().translationY(initialY);
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            }
+        });
     }
 
     @Override

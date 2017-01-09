@@ -21,6 +21,7 @@ import com.cg.watbalance.preferences.Connection;
 import com.cg.watbalance.preferences.ConnectionDetails;
 import com.cg.watbalance.preferences.Encryption;
 import com.cg.watbalance.preferences.FileManager;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.net.InetAddress;
 
@@ -34,6 +35,7 @@ public class Service extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("SERVICE", "REQUEST RECEIVED");
+        AndroidThreeTen.init(context);
         initializeService(context);
     }
 
@@ -54,10 +56,17 @@ public class Service extends BroadcastReceiver {
             protected WatAccount doInBackground(String... strings) {
                 Encryption myEncryption = new Encryption(context);
                 SharedPreferences myLoginPref = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-
                 internetAvailable = isInternetAvailable();
+
                 if (internetAvailable) {
-                    myConnDet = new ConnectionDetails(myLoginPref.getString("IDNum", "00000000"), myEncryption.decryptPIN(myLoginPref.getString("PinNum", "0000")));
+                    try {
+                        myConnDet = new ConnectionDetails(myLoginPref.getString("IDNum", "00000000"),
+                                myEncryption.decryptPIN(myLoginPref.getString("PinNum", "0000")));
+                    }
+                    catch (IllegalArgumentException e) {
+                        return null;
+                    }
+
                     return myConnDet.getAccount();
                 }
                 else {
@@ -106,6 +115,7 @@ public class Service extends BroadcastReceiver {
 
                     @Override
                     public void onIncorrectLogin() {
+                        Toast.makeText(context.getApplicationContext(), "Incorrect Login Information!", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -113,15 +123,20 @@ public class Service extends BroadcastReceiver {
                     }
                 };
 
-                if (internetAvailable) {
-                    myConn.getData();
+                if (!internetAvailable) {
+                    myConn.onConnectionError();
+                }
+                else if (result == null) {
+                    myConn.onIncorrectLogin();
                 }
                 else {
-                    myConn.onConnectionError();
+                    myConn.getData();
                 }
             }
         }
+
         new EstablishConnection().execute();
+
     }
 
     public void createNotification(BalanceData myBalData, Context myContext) {

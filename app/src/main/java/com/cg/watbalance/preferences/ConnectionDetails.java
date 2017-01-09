@@ -3,7 +3,6 @@ package com.cg.watbalance.preferences;
 import ca.jeffrey.watcard.WatAccount;
 
 public class ConnectionDetails {
-    final String uWaterlooURL = "https://watcard.uwaterloo.ca/OneWeb/Scripts/OneWeb.exe?";
     final String APIURL = "https://api.uwaterloo.ca/v2/";
     final String APIKey = "?key=907f2381ac84737b6bfe0e41d159fbee";
     final String FoodURL = APIURL + "foodservices/menu.json" + APIKey;
@@ -11,19 +10,17 @@ public class ConnectionDetails {
     final String BuildingURL = APIURL + "buildings/list.json" + APIKey;
     private String myIDNum = null;
     private String myPinNum = null;
-    private String myBalanceURL;
 
     private WatAccount myAccount;
 
-    public ConnectionDetails(final String newIDNum, final String newPinNum){
+    public ConnectionDetails(String newIDNum, String newPinNum) throws IllegalArgumentException {
         myIDNum = newIDNum;
         myPinNum = newPinNum;
 
-            myAccount = new WatAccount(newIDNum, newPinNum);
-            myAccount.login();
-            myAccount.loadBalances();
-            myAccount.loadPersonalInfo();
-
+        myAccount = new WatAccount(newIDNum, newPinNum);
+        myAccount.login();
+        myAccount.loadBalances();
+        myAccount.loadPersonalInfo();
     }
 
     public WatAccount getAccount() {

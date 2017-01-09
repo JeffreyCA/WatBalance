@@ -1,7 +1,5 @@
 package com.cg.watbalance.data;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.threeten.bp.LocalDate;
@@ -66,7 +64,6 @@ public class OutletData implements Serializable {
                 DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
                 for (int i = 0; i < menu.length(); i++) {
-                    Log.i("T", "test");
                     LocalDate tempDate = LocalDate.parse(menu.getJSONObject(i).getString("date"), myFormat);
                     Boolean sameDay = LocalDate.now().isEqual(tempDate);
                     if (sameDay) {
