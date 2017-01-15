@@ -124,10 +124,10 @@ public class Service extends BroadcastReceiver {
                 };
 
                 if (!internetAvailable) {
-                    myConn.onConnectionError();
+                    // myConn.onConnectionError();
                 }
                 else if (result == null) {
-                    myConn.onIncorrectLogin();
+                    // myConn.onIncorrectLogin();
                 }
                 else {
                     myConn.getData();

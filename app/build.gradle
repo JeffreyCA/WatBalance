@@ -37,5 +37,5 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
     compile 'com.android.support:support-v4:25.1.0'
-    compile 'ca.jeffrey.watcard:watcard-android:2.0'
+    compile 'ca.jeffrey.watcard:watcard-android:2.1'
 }
