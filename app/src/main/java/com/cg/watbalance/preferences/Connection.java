@@ -49,7 +49,6 @@ public abstract class Connection {
         onDataReceive();
     }
 
-
     private void createTransHistoryRequest() {
         myTransData = new TransactionData();
         myTransData.setTransList(myConnDetails.getAccount());

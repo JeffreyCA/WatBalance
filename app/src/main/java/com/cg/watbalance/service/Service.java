@@ -43,7 +43,7 @@ public class Service extends BroadcastReceiver {
     private boolean isInternetAvailable() {
         try {
             InetAddress ipAddr = InetAddress.getByName("watcard.uwaterloo.ca");
-            return !ipAddr.equals("");
+            return !ipAddr.equals("") || ipAddr != null;
 
         } catch (Exception e) {
             return false;
@@ -58,6 +58,10 @@ public class Service extends BroadcastReceiver {
                 SharedPreferences myLoginPref = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
                 internetAvailable = isInternetAvailable();
 
+                myConnDet = new ConnectionDetails(myLoginPref.getString("IDNum", "00000000"),
+                        myEncryption.decryptPIN(myLoginPref.getString("PinNum", "0000")));
+                return myConnDet.getAccount();
+                /*
                 if (internetAvailable) {
                     try {
                         myConnDet = new ConnectionDetails(myLoginPref.getString("IDNum", "00000000"),
@@ -72,6 +76,7 @@ public class Service extends BroadcastReceiver {
                 else {
                     return null;
                 }
+                */
             }
 
             @Override
