@@ -28,6 +28,7 @@ import com.cg.watbalance.data.transaction.TransactionListAdapter;
 import com.cg.watbalance.preferences.FileManager;
 import com.cg.watbalance.preferences.Preferences;
 import com.cg.watbalance.service.Service;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.threeten.bp.LocalDateTime;
@@ -77,6 +78,8 @@ public class transactionScreen extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        AndroidThreeTen.init(this);
+        
         FileManager myFM = new FileManager(this);
         myFM.openFileInput("myTransData");
         TransactionData myTransData = (TransactionData) myFM.readData();

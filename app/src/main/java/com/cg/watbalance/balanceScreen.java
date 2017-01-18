@@ -26,6 +26,7 @@ import com.cg.watbalance.data.BalanceData;
 import com.cg.watbalance.preferences.FileManager;
 import com.cg.watbalance.preferences.Preferences;
 import com.cg.watbalance.service.Service;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class balanceScreen extends AppCompatActivity {
     public static int navItemIndex = 0;
@@ -79,6 +80,8 @@ public class balanceScreen extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        AndroidThreeTen.init(this);
+
         FileManager myFM = new FileManager(this);
         myFM.openFileInput("myBalData");
         BalanceData myBalData = (BalanceData) myFM.readData();

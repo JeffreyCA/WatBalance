@@ -29,6 +29,7 @@ import com.cg.watbalance.data.OutletData;
 import com.cg.watbalance.preferences.FileManager;
 import com.cg.watbalance.preferences.Preferences;
 import com.cg.watbalance.service.Service;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class outletScreen extends AppCompatActivity {
     public static int navItemIndex = 2;
@@ -75,6 +76,8 @@ public class outletScreen extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        AndroidThreeTen.init(this);
+
         FileManager myFM = new FileManager(this);
         myFM.openFileInput("myOutletData");
         OutletData myOutletData = (OutletData) myFM.readData();
