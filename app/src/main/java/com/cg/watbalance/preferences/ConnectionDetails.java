@@ -18,9 +18,14 @@ public class ConnectionDetails {
         myPinNum = newPinNum;
 
         myAccount = new WatAccount(newIDNum, newPinNum);
-        myAccount.login();
-        myAccount.loadBalances();
-        myAccount.loadPersonalInfo();
+
+        if (myAccount.login() != -1) {
+            myAccount.loadBalances();
+            myAccount.loadPersonalInfo();
+        }
+        else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public WatAccount getAccount() {

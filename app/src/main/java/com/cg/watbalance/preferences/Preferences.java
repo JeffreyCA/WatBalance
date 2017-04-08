@@ -68,8 +68,9 @@ public class Preferences extends Activity {
                     SharedPreferences.Editor myEditor = myPreferences.edit();
                     myEditor.remove("login");
                     myEditor.apply();
-                    Intent myIntent = new Intent(myContext, login.class);
-                    startActivity(myIntent);
+                    Intent intent = new Intent(myContext, login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                     return true;
                 }
             });
