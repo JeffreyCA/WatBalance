@@ -24,7 +24,7 @@ public class TransactionData implements Serializable {
 
     public void setTransList(final WatAccount myAccount) {
         exception = false;
-        Thread t = new Thread(new Runnable (){
+        Thread t = new Thread(new Runnable () {
             @Override
             public void run() {
                 int days = LocalDateTime.now().getDayOfMonth() - 1;
@@ -54,14 +54,17 @@ public class TransactionData implements Serializable {
         for (int i = 1; i < myTransList.size(); i++) {
             WatTransaction currentTrans = myTransList.get(i);
 
-            if (!lastDate.toLocalDate().isEqual(currentTrans.getDateTime().toLocalDate())) {
-                myPoint.setLabel(NumberFormat.getCurrencyInstance(Locale.CANADA).format(myPoint.getY()));
-                myPointList.add(myPoint);
+            if (!currentTrans.getTerminal().contains("WAT-NEWFRONT")) {
+                if (!lastDate.toLocalDate().isEqual(currentTrans.getDateTime().toLocalDate())) {
+                    myPoint.setLabel(NumberFormat.getCurrencyInstance(Locale.CANADA).format(myPoint.getY()));
+                    myPointList.add(myPoint);
 
-                lastDate = currentTrans.getDateTime();
-                myPoint = new PointValue(lastDate.getDayOfMonth(), -currentTrans.getAmount());
-            } else {
-                myPoint.set(myPoint.getX(), myPoint.getY() + -currentTrans.getAmount());
+                    lastDate = currentTrans.getDateTime();
+                    myPoint = new PointValue(lastDate.getDayOfMonth(), -currentTrans.getAmount());
+                }
+                else {
+                    myPoint.set(myPoint.getX(), myPoint.getY() + -currentTrans.getAmount());
+                }
             }
         }
 

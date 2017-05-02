@@ -110,8 +110,7 @@ public class login extends AppCompatActivity {
 
                 try {
                     myConnDet = new ConnectionDetails(id, pin);
-                }
-                catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException e) {
                     return null;
                 }
 
@@ -160,6 +159,7 @@ public class login extends AppCompatActivity {
                     public void onIncorrectLogin() {
                         Toast.makeText(getApplicationContext(), "Incorrect Login Information!", Toast.LENGTH_LONG).show();
                     }
+
                     @Override
                     public void onResponseReceive() {
                     }
@@ -167,11 +167,9 @@ public class login extends AppCompatActivity {
 
                 if (!internetAvailable) {
                     myConn.onConnectionError();
-                }
-                else if (result == null) {
+                } else if (result == null) {
                     myConn.onIncorrectLogin();
-                }
-                else {
+                } else {
                     myConn.getData();
                 }
                 progress.dismiss();
@@ -186,11 +184,13 @@ public class login extends AppCompatActivity {
             }
 
             @Override
-            protected void onProgressUpdate(Void... values) {}
+            protected void onProgressUpdate(Void... values) {
+            }
         }
 
         new EstablishConnection().execute();
     }
+
     public void startRepeat() {
         AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         PendingIntent newPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(this, Service.class), 0);

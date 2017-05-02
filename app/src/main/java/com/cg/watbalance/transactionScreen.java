@@ -79,7 +79,7 @@ public class transactionScreen extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         AndroidThreeTen.init(this);
-        
+
         FileManager myFM = new FileManager(this);
         myFM.openFileInput("myTransData");
         TransactionData myTransData = (TransactionData) myFM.readData();
@@ -96,8 +96,7 @@ public class transactionScreen extends AppCompatActivity {
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawers();
-        }
-        else {
+        } else {
             Intent myIntent = new Intent(this, balanceScreen.class);
             startActivity(myIntent);
             finish();

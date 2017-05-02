@@ -94,8 +94,7 @@ public class outletScreen extends AppCompatActivity {
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawers();
-        }
-        else {
+        } else {
             Intent myIntent = new Intent(this, balanceScreen.class);
             startActivity(myIntent);
             finish();
@@ -177,26 +176,6 @@ public class outletScreen extends AppCompatActivity {
 
         //calling sync state is necessary or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
-    }
-
-    public void switchScreen(int id) {
-        if (id == R.id.nav_balance) {
-            Intent myIntent = new Intent(this, balanceScreen.class);
-            startActivity(myIntent);
-            finish();
-        } else if (id == R.id.nav_transactions) {
-            Intent myIntent = new Intent(this, transactionScreen.class);
-            startActivity(myIntent);
-            finish();
-        } else if (id == R.id.nav_settings) {
-            Intent myIntent = new Intent(this, Preferences.class);
-            startActivity(myIntent);
-        } else if (id == R.id.nav_about) {
-            Dialog dialog = new Dialog(this);
-            dialog.setContentView(R.layout.about_dialog);
-            dialog.setTitle("WatBalance");
-            dialog.show();
-        }
     }
 
     public void updateView(OutletData myOutletData) {
