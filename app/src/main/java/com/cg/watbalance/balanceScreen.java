@@ -94,7 +94,7 @@ public class balanceScreen extends AppCompatActivity {
         myFM.closeFileInput();
 
         updateView(myBalData);
-        updateTime(myBalData);
+        // updateTime(myBalData);
 
         IntentFilter myFilter = new IntentFilter("com.cg.WatBalance.newData");
         registerReceiver(myReceiver, myFilter);
@@ -176,6 +176,8 @@ public class balanceScreen extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
+    Context c = this;
+
     public void updateTime(final BalanceData myBalData) {
         final TextView updateText = (TextView) findViewById(R.id.updateText);
         runnable = new Runnable() {
@@ -183,8 +185,13 @@ public class balanceScreen extends AppCompatActivity {
             public void run() {
                 updateText.setText(myBalData.getDateString());
                 updateText.postDelayed(runnable, 60000);
+                FileManager myFM = new FileManager(c);
+                myFM.openFileOutput("myBalData");
+                myFM.writeData(myBalData);
+                myFM.closeFileOutput();
             }
         };
+
         updateText.postDelayed(runnable, 60000);
     }
 
@@ -233,5 +240,6 @@ public class balanceScreen extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         unregisterReceiver(myReceiver);
+        updateText.removeCallbacks(runnable);
     }
 }
