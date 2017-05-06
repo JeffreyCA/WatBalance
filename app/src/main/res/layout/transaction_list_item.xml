@@ -6,42 +6,42 @@
     android:padding="16dp"
     android:theme="@style/ColorTheme">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tranTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="Title"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/tranType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="Type"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/tranTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Time"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="16sp" />
-        </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tranAmt"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/default_amount"
-            android:gravity="center_vertical|right"
-            android:textAlignment="gravity"
+            android:id="@+id/tranTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Title"
             android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tranType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Type"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tranTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="16sp" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tranAmt"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|right"
+        android:text="@string/default_amount"
+        android:textAlignment="gravity"
+        android:textSize="20sp" />
+</LinearLayout>

@@ -10,6 +10,8 @@ import com.cg.watbalance.data.transaction.TransactionData;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.temporal.ChronoUnit;
 
@@ -22,7 +24,6 @@ import ca.jeffrey.watcard.WatAccount;
 import ca.jeffrey.watcard.WatTransaction;
 
 public class BalanceData implements Serializable {
-    private long lastUpdated = 0;
     private float MP = 0;
     private float FD = 0;
     private float Other = 0;
@@ -30,6 +31,7 @@ public class BalanceData implements Serializable {
     private float dailyBalance = 0;
     private float todaySpent = 0;
     private boolean DatePassed = false;
+    private LocalDateTime Date;
 
     public void setBalanceData(final WatAccount myAccount) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.CANADA);
@@ -39,6 +41,7 @@ public class BalanceData implements Serializable {
             FD = numberFormat.parse(String.valueOf(myAccount.getFlexBalance())).floatValue();
             Other = numberFormat.parse(String.valueOf(myAccount.getOtherBalance())).floatValue();
             Total = numberFormat.parse(String.valueOf(myAccount.getTotalBalance())).floatValue();
+            Date = LocalDateTime.now();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,11 +138,10 @@ public class BalanceData implements Serializable {
     }
 
     public String getDateString() {
-        if (lastUpdated == 0) {
-            lastUpdated = System.currentTimeMillis();
-        }
+        ZoneId id = ZoneId.systemDefault();
+        ZonedDateTime zdt = ZonedDateTime.of(Date, id);
 
-        String txt = DateUtils.getRelativeTimeSpanString(lastUpdated, System.currentTimeMillis(),
+        String txt = DateUtils.getRelativeTimeSpanString(zdt.toInstant().toEpochMilli(), System.currentTimeMillis(),
                 DateUtils.MINUTE_IN_MILLIS).toString();
 
         if (txt.equals("0 minutes ago")) {
@@ -147,14 +149,5 @@ public class BalanceData implements Serializable {
         } else {
             return txt;
         }
-
-    }
-
-    public long getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(long lastUpdated) {
-        this.lastUpdated = lastUpdated;
     }
 }

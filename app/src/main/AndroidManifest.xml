@@ -37,7 +37,7 @@
 
         <activity
             android:name=".preferences.Preferences"
-            android:theme="@style/ColorTheme.Preferences"/>
+            android:theme="@style/ColorTheme.Preferences" />
         <activity
             android:name=".balanceScreen"
             android:label="@string/title_activity_balance_screen"

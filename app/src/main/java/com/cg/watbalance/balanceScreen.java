@@ -30,15 +30,12 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class balanceScreen extends AppCompatActivity {
     public static int navItemIndex = 0;
-    TextView updateText;
-    Runnable runnable;
 
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d("RECEIVER", "NEW BALANCE DATA");
             updateView((BalanceData) intent.getSerializableExtra("myBalData"));
-            updateTime((BalanceData) intent.getSerializableExtra("myBalData"));
         }
     };
 
@@ -53,7 +50,6 @@ public class balanceScreen extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateText.removeCallbacks(runnable);
                 Snackbar.make(findViewById(R.id.rootView), "Refreshing...", Snackbar.LENGTH_LONG).show();
                 sendBroadcast(new Intent(getApplicationContext(), Service.class));
             }
@@ -68,8 +64,6 @@ public class balanceScreen extends AppCompatActivity {
         SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         name.setText(myPreferences.getString("Name", "User"));
         id.setText("ID# " + myPreferences.getString("IDNum", "Unknown"));
-
-        updateText = (TextView) findViewById(R.id.updateText);
     }
 
     @Override
@@ -94,14 +88,13 @@ public class balanceScreen extends AppCompatActivity {
         myFM.closeFileInput();
 
         updateView(myBalData);
-        // updateTime(myBalData);
 
         IntentFilter myFilter = new IntentFilter("com.cg.WatBalance.newData");
         registerReceiver(myReceiver, myFilter);
 
-        updateText.removeCallbacks(runnable);
         Snackbar.make(findViewById(R.id.rootView), "Refreshing...", Snackbar.LENGTH_LONG).show();
         sendBroadcast(new Intent(getApplicationContext(), Service.class));
+
     }
 
     private void setUpNavigationView(final Context c) {
@@ -176,25 +169,6 @@ public class balanceScreen extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
-    Context c = this;
-
-    public void updateTime(final BalanceData myBalData) {
-        final TextView updateText = (TextView) findViewById(R.id.updateText);
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                updateText.setText(myBalData.getDateString());
-                updateText.postDelayed(runnable, 60000);
-                FileManager myFM = new FileManager(c);
-                myFM.openFileOutput("myBalData");
-                myFM.writeData(myBalData);
-                myFM.closeFileOutput();
-            }
-        };
-
-        updateText.postDelayed(runnable, 60000);
-    }
-
     public void updateView(BalanceData myBalData) {
         TextView total = (TextView) findViewById(R.id.Total);
         total.setText(myBalData.getTotalString());
@@ -240,6 +214,5 @@ public class balanceScreen extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         unregisterReceiver(myReceiver);
-        updateText.removeCallbacks(runnable);
     }
 }

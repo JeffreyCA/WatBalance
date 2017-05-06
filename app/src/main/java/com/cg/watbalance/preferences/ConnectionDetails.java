@@ -22,8 +22,7 @@ public class ConnectionDetails {
         if (myAccount.login() != -1) {
             myAccount.loadBalances();
             myAccount.loadPersonalInfo();
-        }
-        else {
+        } else {
             throw new IllegalArgumentException();
         }
     }

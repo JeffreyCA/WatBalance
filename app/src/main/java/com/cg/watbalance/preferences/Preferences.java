@@ -36,8 +36,7 @@ public class Preferences extends Activity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent();
-        }
-        else {
+        } else {
             root = (LinearLayout) findViewById(android.R.id.list).getParent();
         }
 

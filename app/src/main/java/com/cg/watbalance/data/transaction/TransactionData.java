@@ -22,26 +22,6 @@ public class TransactionData implements Serializable {
     private List<WatTransaction> myTransList;
     private boolean exception;
 
-    public void setTransList(final WatAccount myAccount) {
-        exception = false;
-        Thread t = new Thread(new Runnable () {
-            @Override
-            public void run() {
-                int days = LocalDateTime.now().getDayOfMonth() - 1;
-                myTransList = myAccount.getLastDaysTransactions(days, false);
-            }
-        });
-
-        t.start();
-
-        try {
-            t.join();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public List<PointValue> makeDayPointValues() {
         List<PointValue> myPointList = new ArrayList<>();
 
@@ -61,8 +41,7 @@ public class TransactionData implements Serializable {
 
                     lastDate = currentTrans.getDateTime();
                     myPoint = new PointValue(lastDate.getDayOfMonth(), -currentTrans.getAmount());
-                }
-                else {
+                } else {
                     myPoint.set(myPoint.getX(), myPoint.getY() + -currentTrans.getAmount());
                 }
             }
@@ -106,5 +85,24 @@ public class TransactionData implements Serializable {
 
     public List<WatTransaction> getTransList() {
         return myTransList;
+    }
+
+    public void setTransList(final WatAccount myAccount) {
+        exception = false;
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int days = LocalDateTime.now().getDayOfMonth() - 1;
+                myTransList = myAccount.getLastDaysTransactions(days, false);
+            }
+        });
+
+        t.start();
+
+        try {
+            t.join();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

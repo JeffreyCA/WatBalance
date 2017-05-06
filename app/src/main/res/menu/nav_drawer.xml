@@ -2,22 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-    <item android:title="WatBalance">
-        <menu>
-            <item
-                android:id="@+id/nav_balance"
-                android:icon="@drawable/ic_menu_credit_card"
-                android:title="Balance" />
-            <item
-                android:id="@+id/nav_transactions"
-                android:icon="@drawable/ic_menu_time"
-                android:title="Transactions" />
-            <item
-                android:id="@+id/nav_outlets"
-                android:icon="@drawable/ic_menu_food"
-                android:title="Outlets" />
-        </menu>
-    </item>
+        <item android:title="WatBalance">
+            <menu>
+                <item
+                    android:id="@+id/nav_balance"
+                    android:icon="@drawable/ic_menu_credit_card"
+                    android:title="Balance" />
+                <item
+                    android:id="@+id/nav_transactions"
+                    android:icon="@drawable/ic_menu_time"
+                    android:title="Transactions" />
+                <item
+                    android:id="@+id/nav_outlets"
+                    android:icon="@drawable/ic_menu_food"
+                    android:title="Outlets" />
+            </menu>
+        </item>
     </group>
     <item android:title="Manage">
         <menu>
